@@ -215,6 +215,19 @@ NAN_METHOD(Add) {
 		return;
 	}
 
+        SERVICE_DELAYED_AUTO_START_INFO delayed;
+        delayed.fDelayedAutostart = TRUE;
+
+        if (ChangeServiceConfig2(svc_handle,
+              SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
+              &delayed) == FALSE) {
+          std::string message ("ChangeServiceConfig2() failed: ");
+          message += raw_strerror (GetLastError ());
+          CloseServiceHandle (scm_handle);
+          Nan::ThrowError(message.c_str());
+          return;
+        }
+
 	CloseServiceHandle (svc_handle);
 	CloseServiceHandle (scm_handle);
 
